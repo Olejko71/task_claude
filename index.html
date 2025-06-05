@@ -49,7 +49,7 @@
                                 <span class="dropdown-arrow">›</span>
                             </div>
                             <select id="activityCategory" class="form-control hidden" required>
-                                <option value="работа">💼 Работа</option>
+                                <option value="работа" selected>💼 Работа</option>
                                 <option value="личные дела">👤 Личные дела</option>
                                 <option value="быт">🏠 Быт</option>
                                 <option value="спорт">💪 Спорт</option>
@@ -62,11 +62,23 @@
 
                         <button type="submit" class="start-btn">Добавить дело</button>
 
-                        <!-- Скрытые поля для совместимости -->
-                        <input type="time" id="activityTime" class="hidden">
+                        <!-- Скрытые поля для совместимости с существующим JS -->
+                        <input type="time" id="activityTime" class="hidden" value="">
                         <select id="activityDuration" class="hidden">
+                            <option value="15">15 мин</option>
                             <option value="25" selected>25 мин</option>
+                            <option value="30">30 мин</option>
+                            <option value="45">45 мин</option>
+                            <option value="60">1 час</option>
+                            <option value="90">1.5 часа</option>
+                            <option value="120">2 часа</option>
+                            <option value="180">3 часа</option>
+                            <option value="240">4 часа</option>
+                            <option value="custom">Другое</option>
                         </select>
+                        <div id="customDuration" class="custom-duration hidden">
+                            <input type="number" id="customDurationInput" class="form-control" min="1" placeholder="мин">
+                        </div>
                     </form>
                 </div>
 
