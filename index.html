@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Трекер дневной активности</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Шапка с навигацией по дням -->
+        <header class="header">
+            <div class="date-navigation flex items-center justify-between">
+                <button id="prevDay" class="btn btn--secondary btn--sm">
+                    <span>⬅️</span>
+                </button>
+                <h1 id="currentDate" class="date-display"></h1>
+                <button id="nextDay" class="btn btn--secondary btn--sm">
+                    <span>➡️</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Навигация по вкладкам -->
+        <div class="tab-navigation flex">
+            <button id="todayTab" class="tab-button active">Сегодня</button>
+            <button id="analysisTab" class="tab-button">Анализ дня</button>
+            <button id="weekTab" class="tab-button">Неделя</button>
+        </div>
+
+        <!-- Контент вкладки "Сегодня" -->
+        <section id="todayContent" class="tab-content">
+            <!-- Новая сетка карточек -->
+            <div class="dashboard-grid">
+                <!-- Карточка новой задачи -->
+                <div class="card new-task-card">
+                    <h3 class="card-title">Новая задача</h3>
+                    <form id="addActivityForm" class="dashboard-form">
+                        <div class="form-group">
+                            <label for="activityDescription" class="form-label">Описание</label>
+                            <input type="text" id="activityDescription" class="form-control" required placeholder="Разработка интерфейса">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="activityCategory" class="form-label">Проект</label>
+                            <div class="project-select" onclick="toggleCategoryDropdown()">
+                                <span id="selectedCategory">💼 Работа</span>
+                                <span class="dropdown-arrow">›</span>
+                            </div>
+                            <select id="activityCategory" class="form-control hidden" required>
+                                <option value="работа">💼 Работа</option>
+                                <option value="личные дела">👤 Личные дела</option>
+                                <option value="быт">🏠 Быт</option>
+                                <option value="спорт">💪 Спорт</option>
+                                <option value="отдых">🎮 Отдых</option>
+                                <option value="деградация">📱 Деградация</option>
+                            </select>
+                        </div>
+
+                        <div class="timer-display" id="timerDisplay">0:25</div>
+
+                        <button type="submit" class="start-btn">Добавить дело</button>
+
+                        <!-- Скрытые поля для совместимости -->
+                        <input type="time" id="activityTime" class="hidden">
+                        <select id="activityDuration" class="hidden">
+                            <option value="25" selected>25 мин</option>
+                        </select>
+                    </form>
+                </div>
+
+                <!-- Карточка аналитики -->
+                <div class="card analytics-card">
+                    <h3 class="card-title">Аналитика</h3>
+                    <div class="chart-container">
+                        <canvas id="dashboardChart" width="180" height="180"></canvas>
+                        <div class="chart-center-value" id="chartCenterValue">0,0</div>
+                    </div>
+                    <div class="legend" id="dashboardLegend">
+                        <!-- Легенда будет заполнена через JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Карточка списка задач "Сегодня" -->
+                <div class="card today-tasks-card">
+                    <h3 class="card-title">Сегодня</h3>
+                    <div class="task-list" id="dashboardTasksList">
+                        <!-- Задачи будут добавлены через JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Контент вкладки "Анализ дня" -->
+        <section id="analysisContent" class="tab-content hidden">
+            <div class="analysis-container">
+                <div class="chart-container">
+                    <h3>Распределение времени за день</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="dailyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="stats-container">
+                    <div class="card">
+                        <div class="card__header">
+                            <h3>Статистика за день</h3>
+                        </div>
+                        <div class="card__body">
+                            <div id="categoryStats" class="category-stats">
+                                <!-- Статистика по категориям будет добавлена через JavaScript -->
+                            </div>
+                            <div class="total-stats">
+                                <p><strong>Общее время активности:</strong> <span id="totalTime">0 часов 0 минут</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card ai-analysis">
+                        <div class="card__header">
+                            <h3>Анализ дня</h3>
+                        </div>
+                        <div class="card__body">
+                            <div id="aiAnalysis" class="ai-analysis-content">
+                                <!-- Анализ будет добавлен через JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Контент вкладки "Неделя" -->
+        <section id="weekContent" class="tab-content hidden">
+            <div class="week-container">
+                <div class="chart-container">
+                    <h3>Активность за неделю</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="weekly-stats card">
+                    <div class="card__header">
+                        <h3>Сводка за неделю</h3>
+                    </div>
+                    <div class="card__body">
+                        <div id="weeklyStats" class="weekly-stats-content">
+                            <!-- Данные будут добавлены через JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Модальное окно для редактирования дела -->
+    <div id="editModal" class="modal hidden">
+        <div class="modal-content card">
+            <div class="card__header flex justify-between items-center">
+                <h3>Редактирование дела</h3>
+                <button id="closeModal" class="btn btn--sm btn--secondary">✕</button>
+            </div>
+            <div class="card__body">
+                <form id="editActivityForm" class="form">
+                    <input type="hidden" id="editActivityId">
+                    
+                    <div class="form-group">
+                        <label for="editActivityTime" class="form-label">Время</label>
+                        <input type="time" id="editActivityTime" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editActivityCategory" class="form-label">Категория</label>
+                        <select id="editActivityCategory" class="form-control" required>
+                            <option value="работа">💼 Работа</option>
+                            <option value="личные дела">👤 Личные дела</option>
+                            <option value="быт">🏠 Быт</option>
+                            <option value="спорт">💪 Спорт</option>
+                            <option value="отдых">🎮 Отдых</option>
+                            <option value="деградация">📱 Деградация</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editActivityDescription" class="form-label">Описание</label>
+                        <input type="text" id="editActivityDescription" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editActivityDuration" class="form-label">Продолжительность</label>
+                        <select id="editActivityDuration" class="form-control" required>
+                            <option value="15">15 мин</option>
+                            <option value="30">30 мин</option>
+                            <option value="45">45 мин</option>
+                            <option value="60">1 час</option>
+                            <option value="90">1.5 часа</option>
+                            <option value="120">2 часа</option>
+                            <option value="180">3 часа</option>
+                            <option value="240">4 часа</option>
+                            <option value="custom">Другое</option>
+                        </select>
+                        <div id="editCustomDuration" class="custom-duration hidden">
+                            <input type="number" id="editCustomDurationInput" class="form-control" min="1" placeholder="мин">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn--primary">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомление -->
+    <div id="notification" class="notification hidden">
+        <div class="notification-content">
+            <span id="notificationMessage"></span>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
