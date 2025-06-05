@@ -159,7 +159,39 @@
     --color-info-rgb: 167, 169, 169;
   }
 }
+/* Dashboard Grid - ДОБАВИТЬ СЮДА */
+.dashboard-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+    grid-template-areas: 
+        "new-task analytics"
+        "today today" !important;
+    margin-bottom: 24px;
+}
 
+.new-task-card {
+    grid-area: new-task !important;
+}
+
+.analytics-card {
+    grid-area: analytics !important;
+}
+
+.today-tasks-card {
+    grid-area: today !important;
+}
+
+.card {
+    display: block !important;
+    background: white !important;
+    border-radius: 20px !important;
+    padding: 24px !important;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.05) !important;
+}
+
+/* Base styles */
+html {
 /* Base styles */
 html {
   font-size: var(--font-size-base);
